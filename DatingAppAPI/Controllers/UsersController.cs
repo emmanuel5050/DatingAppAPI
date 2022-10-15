@@ -2,45 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingAppAPI.Data;
+using DatingAppAPI.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace DatingAppAPI.Controllers
 {
-    [Route("api/[controller]")]
-    public class ValuesController : Controller
+    
+    public class UsersController : ApiBaseController
     {
-        // GET: api/values
+        private readonly DataContext _context;
+
+        public UsersController(DataContext context)
+        {
+            _context = context;
+        }
+        [Authorize]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            return new string[] { "value1", "value2" };
+            return await _context.Users.ToListAsync();
         }
 
-        // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<AppUser>> GetUser(int id)
         {
-            return "value";
+            return await _context.Users.FindAsync(id);
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
+
+    
 }
